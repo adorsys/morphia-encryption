@@ -44,7 +44,10 @@ public class EncryptionConverter extends TypeConverter implements SimpleValueCon
 
     @Override
     public Object decode(Class<?> targetClass, Object dbObject, MappedField mappedField) {
-        if (dbObject == null || !(dbObject instanceof byte[])) {
+        if (dbObject == null || !(dbObject instanceof byte[]) || (!mappedField.getField().isAnnotationPresent(StoreEncrypted.class))) {
+        	if (mappedField.getType() == BigDecimal.class) {
+        		return new BigDecimal((String)dbObject);
+        	}
             return dbObject;
         }
         try {
@@ -80,8 +83,13 @@ public class EncryptionConverter extends TypeConverter implements SimpleValueCon
 
         final byte[] contentToEncrypt; 
         if (value instanceof EncryptValue) {
-            contentToEncrypt = ((EncryptValue)value).getData(); 
+            contentToEncrypt = ((EncryptValue)value).getData();
+        } else if (mappedField == null) {
+        	return value;
         } else if (!mappedField.getField().isAnnotationPresent(StoreEncrypted.class)) {
+        	if (mappedField.getType() == BigDecimal.class) {
+        		return value != null ? value.toString() : null;
+        	}
             return value;
         } else if (mappedField.getType() == byte[].class) {
             contentToEncrypt = (byte[]) value;

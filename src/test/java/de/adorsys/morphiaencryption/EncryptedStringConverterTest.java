@@ -72,6 +72,7 @@ public class EncryptedStringConverterTest {
         
         //bd is not supported by default
         testEntity.setBigDecimal(null);
+        testEntity.setUnencryptedBigDecimal(null);
         datastore.save(testEntity);
         
         morphia.getMapper().getConverters().addConverter(encConverter);
@@ -93,6 +94,8 @@ public class EncryptedStringConverterTest {
         testEntity.setInteger(1);
         testEntity.setLongval(1l);
         testEntity.setString("test");
+        testEntity.setUnencryptedString("foo");
+        testEntity.setUnencryptedBigDecimal(new BigDecimal("12.11"));
         return testEntity;
     }
     
@@ -109,5 +112,20 @@ public class EncryptedStringConverterTest {
         List<TestEntity> asList = datastore.createQuery(TestEntity.class).field("string").equal(new EncryptValue("test")).asList();
         assertEquals(1, asList.size());
     }
+    
+    @Test
+    public void testFindUnencrypted() {
+        TestEntity testEntity = createTestEntity();
+        datastore.save(testEntity);
+        
+        FindIterable<Document> find = datastore.getMongo().getDatabase("test").getCollection("test").find();
+        for (Document document : find) {
+            System.out.println(document);
+        }
+        
+        List<TestEntity> asList = datastore.createQuery(TestEntity.class).field("unencryptedString").equal("foo").asList();
+        assertEquals(1, asList.size());
+    }
+
 
 }

@@ -37,6 +37,12 @@ public class TestEntity {
     @StoreEncrypted
     @Property
     private String nullVal;
+    
+    @Property
+    private String unencryptedString;
+    
+    @Property
+    private BigDecimal unencryptedBigDecimal;
 
     @StoreEncrypted
     @Property
@@ -110,5 +116,21 @@ public class TestEntity {
     public void setNullVal(String nullVal) {
         this.nullVal = nullVal;
     }
+
+	public String getUnencryptedString() {
+		return unencryptedString;
+	}
+
+	public void setUnencryptedString(String unencryptedString) {
+		this.unencryptedString = unencryptedString;
+	}
+
+	public BigDecimal getUnencryptedBigDecimal() {
+		return unencryptedBigDecimal;
+	}
+
+	public void setUnencryptedBigDecimal(BigDecimal unencryptedBigDecimal) {
+		this.unencryptedBigDecimal = unencryptedBigDecimal;
+	}
 
 }
